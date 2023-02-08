@@ -1,6 +1,7 @@
 import requests
 import time
 from parsel import Selector
+import re
 
 
 # Requisito 1
@@ -34,7 +35,29 @@ def scrape_next_page_link(html_content):
 
 # Requisito 4
 def scrape_news(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+    print(selector)
+    url = selector.css('link[rel=canonical] ::attr(href)').get()
+    title = selector.css('h1.entry-title ::text').get().strip()
+    timestap = selector.css('li.meta-date ::text').get()
+    writer = selector.css('li.meta-author span.author ::text').get()
+    reading_time_str: str = selector.css('li.meta-reading-time ::text').get()
+    # a regex e função a baixo foram retiradas de:
+    # https://stackoverflow.com/questions/4289331/how-to-extract-numbers-from-a-string-in-python
+    reading_time = int(re.findall(r'\d+', reading_time_str)[0])
+    summary = "".join(selector.css('div.entry-content > p:nth-of-type(1)\
+         ::text').getall()).strip()
+    category = selector.css('span.label ::text').get()
+    news_info = {
+        "url": url,
+        "title": title,
+        "timestamp": timestap,
+        "writer": writer,
+        "reading_time": reading_time,
+        "summary": summary,
+        "category": category,
+    }
+    return news_info
 
 
 # Requisito 5
