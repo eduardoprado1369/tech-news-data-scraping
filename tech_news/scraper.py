@@ -21,13 +21,15 @@ def fetch(url):
 def scrape_updates(html_content):
     selector = Selector(text=html_content)
     updates = selector.css('h2.entry-title a ::attr(href)').getall()
-    print(updates)
     return updates
 
 
 # Requisito 3
 def scrape_next_page_link(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+    next_page_url = selector.css("a.next ::attr(href)").get()
+    print(next_page_url)
+    return next_page_url
 
 
 # Requisito 4
