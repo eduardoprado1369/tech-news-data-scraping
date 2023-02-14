@@ -30,14 +30,12 @@ def scrape_updates(html_content):
 def scrape_next_page_link(html_content):
     selector = Selector(text=html_content)
     next_page_url = selector.css("a.next ::attr(href)").get()
-    print(next_page_url)
     return next_page_url
 
 
 # Requisito 4
 def scrape_news(html_content):
     selector = Selector(text=html_content)
-    print(selector)
     url = selector.css('link[rel=canonical] ::attr(href)').get()
     title = selector.css('h1.entry-title ::text').get().strip()
     timestap = selector.css('li.meta-date ::text').get()
@@ -62,15 +60,18 @@ def scrape_news(html_content):
 
 
 # Requisito 5
-def get_tech_news(amount):
+def get_tech_news(amount: int):
+    curr_page = 'https://blog.betrybe.com/'
+    all_pages = []
+    all_pages.append(curr_page)
+    for _ in range(int(amount / 12)):
+        curr_page = scrape_next_page_link(fetch(curr_page))
+        all_pages.append(curr_page)
+    print(all_pages)
+    all_links = []
     all_news = []
-    html_content = fetch('https://blog.betrybe.com/')
-    news_links = scrape_updates(html_content)
-    while len(all_news) < amount:
-        for news in news_links:
-            if len(all_news) % 12 != 0:
-                all_news.append(scrape_news(news))
-            else:
-                news_links = scrape_updates(scrape_next_page_link(html_content))
+    while len(all_links) < amount:
+        scrape_updates()
     create_news(all_news)
     print(all_news)
+    return all_news
