@@ -2,7 +2,6 @@ import requests
 import time
 from parsel import Selector
 import re
-import math
 from tech_news.database import create_news
 
 
@@ -67,7 +66,6 @@ def get_tech_news(amount: int):
     curr_page = 'https://blog.betrybe.com/'
     all_news = list()
     while len(all_news) < amount:
-        print(len(all_news))
         curr_page_html = fetch(curr_page)
         curr_page_news = scrape_updates(curr_page_html)
         for news in curr_page_news:
