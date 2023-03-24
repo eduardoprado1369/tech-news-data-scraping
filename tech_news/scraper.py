@@ -2,6 +2,7 @@ import requests
 import time
 from parsel import Selector
 import re
+import math
 from tech_news.database import create_news
 
 
@@ -61,17 +62,18 @@ def scrape_news(html_content):
 
 # Requisito 5
 def get_tech_news(amount: int):
+    if not amount:
+        return None
     curr_page = 'https://blog.betrybe.com/'
-    all_pages = []
-    all_pages.append(curr_page)
-    for _ in range(int(amount / 12)):
-        curr_page = scrape_next_page_link(fetch(curr_page))
-        all_pages.append(curr_page)
-    print(all_pages)
-    all_links = []
-    all_news = []
-    while len(all_links) < amount:
-        scrape_updates()
+    all_news = list()
+    while len(all_news) < amount:
+        print(len(all_news))
+        curr_page_html = fetch(curr_page)
+        curr_page_news = scrape_updates(curr_page_html)
+        for news in curr_page_news:
+            if len(all_news) < amount:
+                curr_news_html = fetch(news)
+                all_news.append(scrape_news(curr_news_html))
+        curr_page = scrape_next_page_link(curr_page_html)
     create_news(all_news)
-    print(all_news)
     return all_news
