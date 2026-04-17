@@ -145,3 +145,6 @@ dmypy.json
 
 # MacOS files
 .DS_Store
+
+# Mocks
+./tests/reading_plan/mocks/mocked_news.py

@@ -6,7 +6,7 @@ from tech_news.database import create_news
 
 
 # Requisito 1
-def fetch(url):
+def fetch(url: str):
     try:
         response = requests.get(url, timeout=3)
         time.sleep(1)
@@ -34,14 +34,14 @@ def scrape_next_page_link(html_content):
 
 
 # Requisito 4
-def scrape_news(html_content):
+def scrape_news(html_content) -> dict:
     selector = Selector(text=html_content)
     url = selector.css('link[rel=canonical] ::attr(href)').get()
     title = selector.css('h1.entry-title ::text').get().strip()
     timestap = selector.css('li.meta-date ::text').get()
     writer = selector.css('li.meta-author span.author ::text').get()
     reading_time_str: str = selector.css('li.meta-reading-time ::text').get()
-    # a regex e função a baixo foram retiradas de:
+    # regex and the follwing function were taken from:
     # https://stackoverflow.com/questions/4289331/how-to-extract-numbers-from-a-string-in-python
     reading_time = int(re.findall(r'\d+', reading_time_str)[0])
     summary = "".join(selector.css('div.entry-content > p:nth-of-type(1)\
@@ -56,6 +56,7 @@ def scrape_news(html_content):
         "summary": summary,
         "category": category,
     }
+    print(news_info)
     return news_info
 
 
